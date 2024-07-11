@@ -55,7 +55,7 @@ byte sBuffer[13]; // Serial buffer
 //  Marklin hash
 //----------------------------------------------------------------------------------------
 
-uint16_t RrHash; // for Rocrail hash
+uint16_t rrHash; // for Rocrail hash
 
 //----------------------------------------------------------------------------------------
 //  TCP/WIFI-ETHERNET
@@ -154,12 +154,12 @@ void setup()
       if (client.available()) // if there's bytes to read from the client,
         rb = client.readBytes(cBuffer, 13);
     }
-    RrHash = ((cBuffer[2] << 8) | cBuffer[3]);
-    debug.println(RrHash, HEX);
+    rrHash = ((cBuffer[2] << 8) | cBuffer[3]);
+    debug.println(rrHash, HEX);
 
     // --- register Rocrail on the CAN bus
     CANMessage frame;
-    frame.id = (cBuffer[0] << 24) | (cBuffer[1] << 16) | RrHash;
+    frame.id = (cBuffer[0] << 24) | (cBuffer[1] << 16) | rrHash;
     frame.ext = true;
     frame.len = cBuffer[4];
     for (byte i = 0; i < frame.len; i++)
@@ -174,10 +174,10 @@ void setup()
   tcpToCanQueue = xQueueCreate(10, 13 * sizeof(byte));
 
   // Create tasks
-  xTaskCreatePinnedToCore(CANReceiveTask, "CANReceiveTask", 2048, NULL, 1, NULL, 0);
-  xTaskCreatePinnedToCore(TCPSendTask, "TCPSendTask", 2048, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(TCPReceiveTask, "TCPReceiveTask", 2048, NULL, 1, NULL, 1);
-  xTaskCreatePinnedToCore(CANSendTask, "CANSendTask", 2048, NULL, 1, NULL, 0);
+  xTaskCreatePinnedToCore(CANReceiveTask, "CANReceiveTask", 2 * 1024, NULL, 3, NULL, 0);
+  xTaskCreatePinnedToCore(TCPSendTask, "TCPSendTask", 2 * 1024, NULL, 1, NULL, 1);
+  xTaskCreatePinnedToCore(TCPReceiveTask, "TCPReceiveTask", 2 * 1024, NULL, 3, NULL, 1);
+  xTaskCreatePinnedToCore(CANSendTask, "CANSendTask", 2 * 1024, NULL, 1, NULL, 0);
 } // end setup
 
 //----------------------------------------------------------------------------------------
@@ -268,7 +268,7 @@ void CANSendTask(void *pvParameters)
     if (xQueueReceive(tcpToCanQueue, buffer, portMAX_DELAY))
     {
       CANMessage frameOut;
-      frameOut.id = (buffer[0] << 24) | (buffer[1] << 16) | RrHash;
+      frameOut.id = (buffer[0] << 24) | (buffer[1] << 16) | rrHash;
       frameOut.ext = true;
       frameOut.len = buffer[4];
       for (byte i = 0; i < frameOut.len; i++)
