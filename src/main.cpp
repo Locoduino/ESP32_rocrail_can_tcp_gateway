@@ -19,7 +19,6 @@
 #error "Select an ESP32 board"
 #endif
 
-
 //----------------------------------------------------------------------------------------
 //   Include files
 //----------------------------------------------------------------------------------------
@@ -41,7 +40,7 @@
 //  CAN Desired Bit Rate
 //----------------------------------------------------------------------------------------
 
-static const uint32_t DESIRED_BIT_RATE = 250UL * 1000UL;  // Marklin CAN baudrate = 250Kbit/s
+static const uint32_t DESIRED_BIT_RATE = 250UL * 1000UL; // Marklin CAN baudrate = 250Kbit/s
 
 //----------------------------------------------------------------------------------------
 //  Buffers  : Rocrail always send 13 bytes
@@ -57,7 +56,7 @@ byte sBuffer[13]; // Serial buffer
 uint16_t RrHash; // for Rocrail hash
 
 //----------------------------------------------------------------------------------------
-//  TCP/WIFI
+//  TCP/WIFI-ETHERNET
 //----------------------------------------------------------------------------------------
 
 #include <WiFi.h>
@@ -72,7 +71,7 @@ WiFiClient client;
 //  Debug declaration
 //----------------------------------------------------------------------------------------
 
-void debugFrame(const CANMessage*);
+void debugFrame(const CANMessage *);
 
 //----------------------------------------------------------------------------------------
 //   SETUP
@@ -88,10 +87,10 @@ void setup()
   // Serial.setTimeout(2);
   // debug.begin(115200, SERIAL_8N1, RXD1, TXD1); // For debug
 
-  //5only for tcp connection)
-  debug.begin(115200);
+  //(only for tcp connection)
+  debug.begin(115200); // For debug
 
-  while (!Serial)
+  while (!debug)
   {
     debug.print(".");
     delay(200);
@@ -120,7 +119,8 @@ void setup()
 
   WiFi.begin(ssid, password);
 
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.print(".");
   }
@@ -132,13 +132,14 @@ void setup()
 
   server.begin();
 
-  while (!client)   // listen for incoming clients
+  while (!client) // listen for incoming clients
     client = server.available();
 
   // extract the Rocrail hash
   debug.printf("New Client Rocrail : 0x");
-  if (client.connected()) {            // loop while the client's connected
-    int16_t rb = 0;                    //!\ Do not change type int16_t
+  if (client.connected())
+  {                 // loop while the client's connected
+    int16_t rb = 0; //!\ Do not change type int16_t
     while (rb != 13)
     {
       if (client.available()) // if there's bytes to read from the client,
@@ -160,8 +161,6 @@ void setup()
     debugFrame(&frame);
   }
 }
-
-
 
 //----------------------------------------------------------------------------------------
 //   LOOP
@@ -194,7 +193,6 @@ void loop()
   for (byte el : cBuffer)
     el = 0;
 
-
   if (client.available())
   {
     debug.printf("TCP -> CAN\n\n");
@@ -213,10 +211,15 @@ void loop()
     }
   }
 
-  if (!client.connected())
+  uint32_t startTime = millis();
+  while (!client && (millis() - startTime < 10000))
+  { // 10 seconds timeout
+    client = server.available();
+    delay(100); // Eviter le busy-wait
+  }
+  if (!client)
   {
-    client.stop();
-    Serial.println("Client Disconnected.");
+    debug.println("Client connection timeout");
   }
 }
 
@@ -239,6 +242,5 @@ void debugFrame(const CANMessage *frame)
   debug.println("-----------------------------------------------------------------------------------------------------------------------------");
   debug.println("");
 }
-
 
 //----------------------------------------------------------------------------------------
