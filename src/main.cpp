@@ -2,7 +2,7 @@
    rocrail_CAN_TCP_GW
 
     Pogramme permettant le pilotage de locomotives à partir de Rocrail©
-    et la mise a jour de la liste des locomotives en MFX.
+    et la mise a jour de la liste des locomotives en MFX en utilisant une liaison TCP (WiFi ou Ethernet).
 
 
 */
