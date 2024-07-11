@@ -59,11 +59,11 @@ uint16_t RrHash; // for Rocrail hash
 //----------------------------------------------------------------------------------------
 
 #include <WiFi.h>
-WiFiServer server(15731);
 const char *ssid = "*************";
 const char *password = "*************";
 const uint port = 15731;
 const char *ip = "192.168.1.13"; // tcpbin.com's ip
+WiFiServer server(port);
 WiFiClient client;
 
 //----------------------------------------------------------------------------------------
