@@ -7,7 +7,7 @@
 
 #define PROJECT "rocrail_can_tcp_gateway"
 #define VERSION "0.3"
-#define AUTHOR "Christophe BOBILLE"
+#define AUTHOR "Christophe BOBILLE - locoduino.org"
 
 //----------------------------------------------------------------------------------------
 //  Board Check
@@ -141,7 +141,7 @@ void setup() {
   // extract the Rocrail hash
   debug.printf("New Client Rocrail : 0x");
   if (client.connected()) { // loop while the client's connected
-    int16_t rb = 0; //!\ Do not change type int16_t
+    int16_t rb = 0; //!\ Do not change type int16_t See https://www.arduino.cc/reference/en/language/functions/communication/stream/streamreadbytes/
     while (rb != 13) {
       if (client.available()) // if there's bytes to read from the client,
         rb = client.readBytes(cBuffer, 13);
