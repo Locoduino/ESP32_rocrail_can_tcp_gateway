@@ -33,7 +33,9 @@
 
 #define RXD1 13
 #define TXD1 14
-#define debug Serial1
+
+#define debug Serial // (only for TCP connection)
+// #define debug Serial1 // (only for USB connection)
 
 //----------------------------------------------------------------------------------------
 //  CAN Desired Bit Rate
@@ -80,10 +82,14 @@ void setup()
 
 {
   //--- Start serial
-  Serial.begin(500000); // Rocrail baudrate to ESP32 USB
-  delay(100);
-  Serial.setTimeout(2);
-  debug.begin(115200, SERIAL_8N1, RXD1, TXD1); // For debug
+  // (only for USB connection)
+  // Serial.begin(500000); // Rocrail baudrate to ESP32 USB
+  // delay(100);
+  // Serial.setTimeout(2);
+  // debug.begin(115200, SERIAL_8N1, RXD1, TXD1); // For debug
+
+  //5only for tcp connection)
+  debug.begin(115200);
 
   while (!Serial)
   {
