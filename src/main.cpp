@@ -6,7 +6,7 @@
 */
 
 #define PROJECT "rocrail_can_tcp_gateway"
-#define VERSION "0.3"
+#define VERSION "1.0"
 #define AUTHOR "Christophe BOBILLE - www.locoduino.org"
 
 //----------------------------------------------------------------------------------------
