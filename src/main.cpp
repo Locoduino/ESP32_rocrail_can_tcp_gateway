@@ -160,7 +160,7 @@ void setup()
 
     debugFrame(&frame);
   }
-}
+} // end setup
 
 //----------------------------------------------------------------------------------------
 //   LOOP
@@ -221,7 +221,7 @@ void loop()
   {
     debug.println("Client connection timeout");
   }
-}
+} // end loop
 
 void debugFrame(const CANMessage *frame)
 {
