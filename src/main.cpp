@@ -120,10 +120,7 @@ void setup()
     debug.println(errorCode, HEX);
   }
   else
-  {
     debug.println("Configuration CAN OK");
-  }
-
   debug.println("");
 
   WiFi.begin(ssid, password);
@@ -198,9 +195,7 @@ void CANReceiveTask(void *pvParameters)
   while (true)
   {
     if (ACAN_ESP32::can.receive(frameIn))
-    {
       xQueueSend(canToTcpQueue, &frameIn, portMAX_DELAY);
-    }
     vTaskDelay(10 / portTICK_PERIOD_MS); // Avoid busy-waiting
   }
 }
