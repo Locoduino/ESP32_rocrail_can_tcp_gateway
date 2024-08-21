@@ -57,8 +57,8 @@ uint16_t rrHash; // for Rocrail hash
 //----------------------------------------------------------------------------------------
 //  Select a communication mode
 //----------------------------------------------------------------------------------------
-#define ETHERNET
-// #define WIFI
+//#define ETHERNET
+#define WIFI
 
 IPAddress ip(192, 168, 1, 207);
 const uint port = 15731;
